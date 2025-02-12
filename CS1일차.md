@@ -16,7 +16,7 @@ class Player
         set { _health = value; } // 값을 설정 (쓰기)
     }
 }
-
+```
 ## **Object Pool을 Queue로 사용하는 이유**
 - **FIFO(First-In-First-Out) 방식 유지**  
   - 먼저 사용된 오브젝트가 먼저 반환됨.  
