@@ -87,19 +87,119 @@ void SpawnEnemy()
 ```
 🔹 InstantiateAsync()를 사용하면 애셋을 직접 로드할 필요 없이 메모리 관리 가능
 
+(2) Addressables.InstantiateAsync() 활용
+```csharp
+public string addressablePrefab = "EnemyPrefab";
+
+void SpawnEnemy()
+{
+    Addressables.InstantiateAsync(addressablePrefab);
+}
+```
+🔹 InstantiateAsync()를 사용하면 애셋을 직접 로드할 필요 없이 메모리 관리 가능
+
+
 (3) 원격 애셋 관리 (Remote Catalog)  
-    * Remote Catalog 기능을 활성화하면 게임 업데이트 없이도 서버에서 새로운 애셋 다운로드 가능  
-    * 게임 클라이언트가 특정 애셋을 필요할 때만 다운로드하도록 설정하여 용량 절약  
+ * Remote Catalog 기능을 활성화하면 게임 업데이트 없이도 서버에서 새로운 애셋 다운로드 가능
+ * 게임 클라이언트가 특정 애셋을 필요할 때만 다운로드하도록 설정하여 용량 절약
+
+---
 
 ## 3. C# 코드 예제 💻
+1️⃣ Addressables을 활용한 비동기 Prefab 로딩
 ```csharp
-// (설명) 코드 예제
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
-public class ExampleScript : MonoBehaviour
+public class LoadPrefab : MonoBehaviour
 {
+    public string prefabKey = "PlayerPrefab"; // Addressables에서 등록한 Key 값
+
     void Start()
     {
-        Debug.Log("Hello, Unity!");
+        LoadPrefabAsync();
+    }
+
+    void LoadPrefabAsync()
+    {
+        Addressables.LoadAssetAsync<GameObject>(prefabKey).Completed += OnPrefabLoaded;
+    }
+
+    void OnPrefabLoaded(AsyncOperationHandle<GameObject> obj)
+    {
+        if (obj.Status == AsyncOperationStatus.Succeeded)
+        {
+            GameObject instance = Instantiate(obj.Result);
+        }
     }
 }
+```
+2️⃣ Addressables을 이용한 UI 이미지 로딩
+```csharp
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+
+public class LoadUIImage : MonoBehaviour
+{
+    public string imageKey = "MainMenuBackground";
+    public Image targetImage;
+
+    void Start()
+    {
+        LoadImage();
+    }
+
+    void LoadImage()
+    {
+        Addressables.LoadAssetAsync<Sprite>(imageKey).Completed += OnImageLoaded;
+    }
+
+    void OnImageLoaded(AsyncOperationHandle<Sprite> obj)
+    {
+        if (obj.Status == AsyncOperationStatus.Succeeded)
+        {
+            targetImage.sprite = obj.Result;
+        }
+    }
+}
+```
+
+3️⃣ Addressables에서 원격 애셋 로드 (서버에서 다운로드)
+```csharp
+using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+
+public class LoadRemoteAsset : MonoBehaviour
+{
+    public string remoteAssetKey = "CloudTexture"; // 서버에 등록된 Addressables Key
+
+    void Start()
+    {
+        Addressables.LoadAssetAsync<Texture2D>(remoteAssetKey).Completed += OnRemoteAssetLoaded;
+    }
+
+    void OnRemoteAssetLoaded(AsyncOperationHandle<Texture2D> obj)
+    {
+        if (obj.Status == AsyncOperationStatus.Succeeded)
+        {
+            Debug.Log("Remote Asset Loaded!");
+        }
+    }
+}
+```
+✅ 서버에서 필요한 애셋만 다운로드 가능  
+✅ 게임 업데이트 없이도 새로운 애셋 제공 가능  
+
+---
+4. 정리 및 결론 ✨  
+1️⃣ 메모리 효율적으로 관리 가능  
+2️⃣ 비동기 로딩 지원으로 프레임 속도 유지  
+3️⃣ 서버에서 애셋 다운로드 가능 (게임 업데이트 부담 감소)  
+4️⃣ 불필요한 애셋을 자동 해제하여 메모리 최적화  
+5️⃣ 기존 AssetBundle보다 훨씬 편리하고 강력한 기능 제공  
+
+💡 즉, Addressables을 활용하면 메모리 최적화된 Unity 프로젝트를 만들 수 있음! 🚀🔥
