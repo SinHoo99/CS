@@ -51,3 +51,7 @@
 - [GameDevHQ](https://gamedevhq.com/)
 - [Awesome Unity GitHub](https://github.com/RyanNielson/awesome-unity)
 
+## 🔗 에셋 다운로드 사이트 (References)
+- [Unity Asset Store](https://assetstore.unity.com/)
+- [itch.io](https://itch.io/game-assets)
+- [OpenGameArt](https://opengameart.org/)
