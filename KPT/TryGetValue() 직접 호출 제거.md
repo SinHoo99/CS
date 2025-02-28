@@ -207,8 +207,71 @@ public void UpdateAllDictionaryUI()
 
 
 ---
-🎯 오늘의 리팩토링 결론
-🚀 GameManager의 메서드를 활용하여 TryGetValue() 직접 호출 제거
-🚀 ContainsKey() vs TryGetValue() 적절한 사용으로 코드 최적화
-🚀 불필요한 데이터 관리 (_fruitSprites 등) 제거 → GameManager에서 직접 가져옴
-🚀 코드 가독성 개선 + 유지보수 편리해짐
+
+✅ 6. SubtractFruitAndCalculateCoins() 최적화
+
+🔹 기존 코드
+```csharp
+public bool SubtractFruitAndCalculateCoins(FruitsID fruitID, int amount)
+{
+    if (!GM.PlayerDataManager.NowPlayerData.Inventory.TryGetValue(fruitID, out var collectedFruit))
+    {
+        Debug.LogWarning($"과일 데이터({fruitID})를 찾을 수 없습니다.");
+        return false;
+    }
+
+    if (!GM.DataManager.FruitDatas.TryGetValue(fruitID, out var fruitData))
+    {
+        Debug.LogWarning($"과일 정보({fruitID})를 찾을 수 없습니다.");
+        return false;
+    }
+
+    if (collectedFruit.Amount < amount)
+    {
+        Debug.LogWarning($"{fruitID}의 수량이 부족하여 감소할 수 없습니다.");
+        return false;
+    }
+
+    collectedFruit.Amount -= amount;
+    GM.PlayerDataManager.NowPlayerData.PlayerCoin += fruitData.Price;
+    return true;
+}
+
+```
+🔺 문제점  
+✔ TryGetValue()를 두 번 사용 (Inventory, FruitDatas)  
+✔ GameManager에 GetFruitsData()와 GetCollectedFruitData() 메서드를 만들었으므로, 중복된 코드 제거 가능  
+
+🔹 교체 후 코드
+```csharp
+public bool SubtractFruitAndCalculateCoins(FruitsID fruitID, int amount)
+{
+    var fruitData = GM.GetFruitsData(fruitID);
+    if (fruitData == null)
+    {
+        Debug.LogWarning($"과일 데이터({fruitID})를 찾을 수 없습니다.");
+        return false;
+    }
+
+    var collectedFruit = GM.GetCollectedFruitData(fruitID);
+    if (collectedFruit.Amount < amount)
+    {
+        Debug.LogWarning($"{fruitID}의 수량이 부족하여 감소할 수 없습니다.");
+        return false;
+    }
+
+    collectedFruit.Amount -= amount;
+    GM.PlayerDataManager.NowPlayerData.PlayerCoin += fruitData.Price;
+    return true;
+}
+```
+✔ TryGetValue() 중복 호출 제거 → 성능 최적화  
+✔ GameManager 활용하여 코드 가독성 향상  
+✔ 데이터 접근 방식 일관성 유지 → 유지보수 용이  
+
+---
+🎯 오늘의 리팩토링 결론  
+🚀 GameManager의 메서드를 활용하여 TryGetValue() 직접 호출 제거  
+🚀 ContainsKey() vs TryGetValue() 적절한 사용으로 코드 최적화  
+🚀 불필요한 데이터 관리 (_fruitSprites 등) 제거 → GameManager에서 직접 가져옴  
+🚀 코드 가독성 개선 + 유지보수 편리해짐  
