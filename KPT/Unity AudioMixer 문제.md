@@ -48,6 +48,5 @@
 - AudioMixer.SetFloat()를 호출할 때 노출된 파라미터 이름이 정확해야 한다.
 
 # 🎯 다음 목표:
-
-AudioMixer의 Mute(음소거) 기능 추가
-PlayerPrefs를 활용하여 볼륨 설정 저장 및 로드 기능 구현
+- AudioMixer의 Mute(음소거) 기능 추가  
+- PlayerPrefs를 활용하여 볼륨 설정 저장 및 로드 기능 구현  
