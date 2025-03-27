@@ -125,3 +125,103 @@ public class UIManager : PersistenSingleton<UIManager>
 
 #endregion
 ```
+
+## 4. 이벤트 버스를 활용한 컴포넌트 독립화(각 이벤트는 임시로 만든 이벤트임으로 중복문제는 신경쓰지않음)
+```csharp
+#region 이벤트 버스활용 컴포넌트 독립화 과정 만들어보기
+public class AObject : MonoBehaviour
+{
+    public GameObject AObj;
+    public Text AObjTxt;
+
+    private void OnEnable()
+    {
+        EventBus.Subscribe<AObjectEvent>(OnAobjectEvent);
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<AObjectEvent>(OnAobjectEvent);
+    }
+
+    void OnAobjectEvent(AObjectEvent e)
+    {
+        Debug.Log("플레이어 사망" + e.playerName);
+        AObjTxt.text = e.playerName;
+        AObj.SetActive(true);
+    }
+}
+public class BObject : MonoBehaviour
+{
+    public GameObject BObj;
+    public Text BObjTxt;
+
+    private void OnEnable()
+    {
+        EventBus.Subscribe<AObjectEvent>(OnBobjectEvent);
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<AObjectEvent>(OnBobjectEvent);
+    }
+
+    void OnBobjectEvent(AObjectEvent e)
+    {
+        Debug.Log("플레이어 사망" + e.playerName);
+        BObjTxt.text = e.playerName;
+        BObj.SetActive(true);
+    }
+}
+public class CObject : MonoBehaviour 
+{
+    public GameObject CObj;
+    public Text CObjTxt;
+
+    private void OnEnable()
+    {
+        EventBus.Subscribe<AObjectEvent>(OnCobjectEvent);
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<AObjectEvent>(OnCobjectEvent);
+    }
+
+    void OnCobjectEvent(AObjectEvent e)
+    {
+        Debug.Log("플레이어 사망" + e.playerName);
+        CObjTxt.text = e.playerName;
+        CObj.SetActive(true);
+    }
+}
+
+
+public class AObjectEvent
+{
+    public string playerName;
+    public AObjectEvent(string name)
+    {
+        playerName = name;
+    }
+}
+
+public class BObjectEvent
+{
+    public string playerName;
+    public BObjectEvent(string name)
+    {
+        playerName = name;
+    }
+}
+
+public class CObjectEvent
+{
+    public string playerName;
+    public CObjectEvent(string name)
+    {
+        playerName = name;
+    }
+}
+#endregion
+```
