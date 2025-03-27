@@ -158,12 +158,12 @@ public class BObject : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.Subscribe<AObjectEvent>(OnBobjectEvent);
+        EventBus.Subscribe<BObjectEvent>(OnBobjectEvent);
     }
 
     private void OnDisable()
     {
-        EventBus.Unsubscribe<AObjectEvent>(OnBobjectEvent);
+        EventBus.Unsubscribe<BObjectEvent>(OnBobjectEvent);
     }
 
     void OnBobjectEvent(AObjectEvent e)
@@ -180,12 +180,12 @@ public class CObject : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.Subscribe<AObjectEvent>(OnCobjectEvent);
+        EventBus.Subscribe<CObjectEvent>(OnCobjectEvent);
     }
 
     private void OnDisable()
     {
-        EventBus.Unsubscribe<AObjectEvent>(OnCobjectEvent);
+        EventBus.Unsubscribe<CObjectEvent>(OnCobjectEvent);
     }
 
     void OnCobjectEvent(AObjectEvent e)
