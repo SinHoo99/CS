@@ -79,6 +79,7 @@ public static class EventBus
 }
 
 // 1. 이벤트 데이터 타입 정의
+// 이벤트가 발생할 때 전달할 데이터를 담는 구조체나 클래스를 생성 해야함
 public class PlayerDieEvent
 {
     public string playerName;
