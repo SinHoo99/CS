@@ -166,14 +166,14 @@ public class BObject : MonoBehaviour
         EventBus.Unsubscribe<BObjectEvent>(OnBobjectEvent);
     }
 
-    void OnBobjectEvent(AObjectEvent e)
+    void OnBobjectEvent(BObjectEvent e)
     {
         Debug.Log("플레이어 사망" + e.playerName);
         BObjTxt.text = e.playerName;
         BObj.SetActive(true);
     }
 }
-public class CObject : MonoBehaviour 
+public class CObject : MonoBehaviour
 {
     public GameObject CObj;
     public Text CObjTxt;
@@ -188,7 +188,7 @@ public class CObject : MonoBehaviour
         EventBus.Unsubscribe<CObjectEvent>(OnCobjectEvent);
     }
 
-    void OnCobjectEvent(AObjectEvent e)
+    void OnCobjectEvent(CObjectEvent e)
     {
         Debug.Log("플레이어 사망" + e.playerName);
         CObjTxt.text = e.playerName;
