@@ -1,0 +1,48 @@
+# 🎣 Unity UI에서 잡은 물고기 수가 0으로 표시되던 문제 정리
+
+## ✅ 최종 결과
+
+UI에서 물고기 데이터를 정상적으로 표시하게 됨 (잡은 물고기 수, 최고 기록 등)
+
+---
+
+## ❗ 문제 요약
+
+- `FishCountListUI`에서 `Start()` 시점에 `NowPlayerData`의 데이터가 비어 있음
+- `GetCatchCount()` 및 `GetBestRecord()` 결과가 항상 0 또는 null로 나옴
+- 실제 저장된 데이터가 있음에도 UI에는 표시되지 않음
+
+---
+
+## 🧠 문제 원인 (개념적 오류)
+
+### 1. **GameManager의 초기화 시점과 UI의 접근 시점 불일치**
+- `GameManager.Instance.NowPlayerData`는 `Awake()` 또는 `Start()`에서 초기화됨
+- `FishCountListUI`의 `Start()` 또는 `OnEnable()`이 더 먼저 실행되면 아직 초기화되지 않은 데이터에 접근하게 됨
+
+### 2. **Refresh 시점이 `FishCaughtEvent` 발생 후에만 의존되어 있었음**
+- 시작 시점에서는 `RefreshUI()`를 호출하지 않거나, 호출 시 `NowPlayerData`가 아직 null이었음
+- 결과적으로 UI는 데이터가 없는 상태로 렌더링됨
+
+---
+
+## 🔧 해결 방법 요약
+
+### ✅ 올바른 방식으로 `_playerData` 주입 시점 통제
+```csharp
+private void Start()
+{
+    _playerData = GameManager.Instance.NowPlayerData;
+
+    if (_playerData == null)
+    {
+        Debug.LogError("[FishCountListUI] _playerData가 null입니다!");
+    }
+    else
+    {
+        Debug.Log($"[FishCountListUI] _playerData 주입 성공 - 해시: {_playerData.GetHashCode()}");
+
+        // 시작 시점에도 Refresh
+        RefreshUI();
+    }
+}
